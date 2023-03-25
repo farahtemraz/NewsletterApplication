@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config();
 import { NewsPiece } from './models/newsPiece';
 import axios from 'axios';
 import nodemailer from 'nodemailer';
@@ -5,18 +7,16 @@ import { google } from 'googleapis';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import newsletterEmail from './templates/newsletterTemplate';
 const OAuth2 = google.auth.OAuth2;
-// const OAuth2: Auth.OAuth2Client = new google.auth.OAuth2();
-// type OAuth2 = typeof google.auth.OAuth2.prototype;
-// import { GoogleOAuth2Client } from './google/types';
 
 export async function sendNewsletter(): Promise<string> {
   // Fetch news
   let fetchedNews;
   try {
-    const url = 'https://newsapi.org/v2/top-headlines?country=eg&apiKey=663929eec90b442e947f03458c17075b';
-
-    const news = await axios.get(url);
-    fetchedNews = news.data.articles;
+    const url = process.env.NEWS_API_URL;
+    if (url) {
+      const news = await axios.get(url);
+      fetchedNews = news.data.articles;
+    }
   } catch (error: any) {
     return 'Failed to fetch news';
   }
@@ -27,9 +27,11 @@ export async function sendNewsletter(): Promise<string> {
   //     author: 'Al Masry Al Youm - المصري اليوم',
   //     title:
   //       'أسعار الذهب اليوم الخميس 23-3-2023 في مصر.. الآن مفاجآت عيار 21 بيع وشراء بالمصنعية - Al Masry Al Youm - المصري اليوم',
-  //     description: null,
+  //     description:
+  //       "The FDA's Oncology Center of Excellence has been a bright spot within the agency in terms of speeding new treatments to patients. That flexibility was on full display this morning as FDA released new draft guidance spelling out exactly how oncology drug devel…",
   //     url: 'https://news.google.com/rss/articles/CBMiMmh0dHBzOi8vd3d3LmFsbWFzcnlhbHlvdW0uY29tL25ld3MvZGV0YWlscy8yODQ4NjM50gEA?oc=5',
-  //     urlToImage: null,
+  //     urlToImage:
+  //       'https://www.howtogeek.com/wp-content/uploads/2023/03/52716322958_8b6b8b3809_o.jpg?height=200p&trim=2,2,2,2"',
   //     publishedAt: '2023-03-23T05:43:00Z',
   //     content: null,
   //   },
@@ -227,43 +229,21 @@ export async function sendNewsletter(): Promise<string> {
   //   },
   // ];
 
-  let arrayItems = '';
-  fetchedNews?.map(
-    (news: NewsPiece) =>
-      (arrayItems =
-        arrayItems +
-          '<li style="list-style-type: none">' +
-          '<p style="margin: 0 0 24px;">' +
-          '<a href=' +
-          news.url +
-          '>' +
-          news.title +
-          '</a>' +
-          '</p>' +
-          '<p style="margin: 0 0 24px;">' +
-          'by ' +
-          news.author +
-          ' at ' +
-          news.publishedAt +
-          '</p>' +
-          '<p style="margin: 0 0 24px;">' +
-          news.description ?? '' + '</p>' + '</li>')
-  );
+  const mailList: string[] = ['farahmohamedtemraz@gmail.com', 'farahtemraz9@gmail.com'];
 
   const oauth2Client = new OAuth2(
-    '252141412002-n0ncea5741k8frdu5ahhemb4ckv0rr2l.apps.googleusercontent.com',
-    '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',
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
     'https://developers.google.com/oauthplayground'
   );
 
   oauth2Client.setCredentials({
-    refresh_token:
-      '1//04Aqfd1EZA2ZyCgYIARAAGAQSNwF-L9Irpjciv0rxXjjoEweWhkSaV5cIlzAqwzDiA40REkJxFXJB-M5LaP8bgRyYSJtzlXzj3aE',
+    refresh_token: process.env.REFRESH_TOKEN,
   });
   const accessToken: string = await new Promise((resolve, reject) => {
     oauth2Client.getAccessToken((err: any, token: any) => {
       if (err) {
-        reject('Failed to create access token :(');
+        reject(`print(${err})`);
       }
       resolve(token);
     });
@@ -276,26 +256,28 @@ export async function sendNewsletter(): Promise<string> {
     secure: true,
     auth: {
       type: 'OAuth2',
-      user: 'yodawynewsletter@gmail.com',
-      clientId: '252141412002-n0ncea5741k8frdu5ahhemb4ckv0rr2l.apps.googleusercontent.com',
-      clientSecret: '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',
+      user: process.env.GMAIL,
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
       accessToken,
     },
   };
 
   const transporter = nodemailer.createTransport(smtpConfig);
-  const emailTemplate = newsletterEmail(arrayItems);
+  const emailTemplate = newsletterEmail(fetchedNews);
 
-  try {
-    await transporter.sendMail({
-      from: 'yodawynewsletter@gmail.com',
-      to: 'farahmohamedtemraz@gmail.com',
-      subject: "Today's news",
-      text: emailTemplate.text,
-      html: emailTemplate.html,
-    });
-  } catch (error: any) {
-    return 'Error in sending email';
+  if (mailList.length > 0) {
+    try {
+      await transporter.sendMail({
+        from: process.env.GMAIL,
+        to: mailList,
+        subject: "Today's news",
+        text: emailTemplate.text,
+        html: emailTemplate.html,
+      });
+    } catch (error: any) {
+      return 'Error in sending email';
+    }
   }
 
   return 'Success';

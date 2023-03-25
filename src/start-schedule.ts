@@ -19,26 +19,14 @@ async function run() {
       overlap: ScheduleOverlapPolicy.ALLOW_ALL,
     },
     spec: {
-      //   intervals: [{ every: '10s' }],
-      // or periodic calendar times:
       calendars: [
         {
-          comment: 'everyday at 9am',
+          comment: 'Everyday at 9AM UTC+02:00, 7AM',
           dayOfWeek: '*',
-          hour: 9,
-          //   minute: 48,
+          hour: 7,
+          // minute: 9,
         },
       ],
-      // or a single datetime:
-      // calendars: [
-      //   {
-      //     comment: '1/1/23 at 9am',
-      //     year: 2023,
-      //     month: 1,
-      //     dayOfMonth: 1,
-      //     hour: 9,
-      //   },
-      // ],
     },
   });
 

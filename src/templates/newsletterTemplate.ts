@@ -1,4 +1,35 @@
-const newsletterEmail = function (arrayItems: string) {
+import { NewsPiece } from './../models/newsPiece';
+const newsletterEmail = function (fetchedNews: NewsPiece[]) {
+  let arrayItems = '';
+  fetchedNews?.map(
+    (news: NewsPiece) =>
+      (arrayItems =
+        arrayItems +
+        '<li style="list-style-type: none">' +
+        '<p style="margin: 0 0 24px;">' +
+        '<a href=' +
+        news.url +
+        '>' +
+        news.title +
+        '</a>' +
+        '</p>' +
+        '<p style="margin: 0 0 24px;">' +
+        'by ' +
+        news.author +
+        ' at ' +
+        news.publishedAt +
+        '</p>' +
+        (news.description ? '<p style="margin: 0 0 24px;">' + news.description + '</p>' : '<p></p>') +
+        (news.urlToImage
+          ? '<img src=' +
+            news.urlToImage +
+            ' alt="news img" height="300">' +
+            '<p style="font-size:10px; text-align:center"> Image credits: ' +
+            news.urlToImage +
+            '</p>'
+          : '<p></p>') +
+        '</li>')
+  );
   const html = `
     <!DOCTYPE html>
     <html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
