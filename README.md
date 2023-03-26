@@ -1,12 +1,12 @@
 # Yodawy Hiring Task
 
-This project was implemented in compliance to the requirments mentioned in Yodawy's newsletter application task document. The base of the project is scaffolded out from running `npx @temporalio/create@latest ./myfolder`, with the addition of extra functionalities specific for the task requirments.
+This project was implemented in compliance to the requirments mentioned in Yodawy's newsletter application task document. The base of the project is obtained from running `npx @temporalio/create@latest ./myfolder`, with the addition of extra functionalities specific for the task requirments.
 
 ### Running this project
 
 1. Clone the project into your local machine.
 1. Create a .env file in the root directory and paste in it the the provided .env file content sent in the submission email.
-1. In your terminal, run `temporal server start-dev` to start [Temporal Server](https://github.com/temporalio/cli/#installation) and leave it running.
+1. In your terminal, run `temporal server start-dev` to start [Temporal Server](https://github.com/temporalio/cli/#installation) and leave it running. It is supposed to run on `http://localhost:8233/`
 1. In another shell, run `npm install` to install dependencies.
 1. Then run `npm run start.watch` to start the Worker and leave it running.
 1. If you want to run the newsletter automation workflow only once and immediately, run `npm run workflow` in another shell to run the Workflow Client.
@@ -22,7 +22,7 @@ This project contains 4 main files that handle the Temporal workflow; activity.t
 
 #### 1. activity.ts
 
-This file contains a method called `sendNewsletter` which contains the actual logic of the project. It is divided into 3 parts. The first part is fetching the news through the API. The API call is specific for fetching the top 20 headline and news about egypt only. This is specified by adding `top-headlines?country=eg` to the API call. 
+This file contains a method called `sendNewsletter` which contains the actual logic of the project. It is divided into 3 parts. The first part is fetching the news through the API. The API call is specific for fetching the top 20 headline and news about Egypt only. This is specified by adding `top-headlines?country=eg` to the API call. 
 
 ![Fetch](/Screenshots/fetchNews.png)
 
@@ -30,11 +30,11 @@ The next 2 parts are responsible for the email generation and sending. The first
 
 ![OAuth2](/Screenshots/ConfigureOAuth2.png)
 
-The sencond part is sending the email itself, which is done using Nodemailer. The recipients of the mail are statically defined in the code (mailList array) in case you want to change them to test receiving the email on your personal email. 
+The sencond part is sending the email itself, which is done using Nodemailer. The recipients of the mail are statically defined in the code (mailList array). In case you want to test receiving the email on your personal email, simply add it to the mailList array shown in the snapshot bellow. 
 
 ![MailList](/Screenshots/mailList.png)
 
-The template of the email itself is defined in `/templates/newsletterTemplate.ts` which is the HTML code that makes up the way the email looks like and what information it includes.
+The template of the email itself is defined in `/templates/newsletterTemplate.ts` which is the HTML template that makes up the way the email looks like and what information it includes.
 
 #### 2. client.ts
 
@@ -42,7 +42,7 @@ This file is what puts the workflow we want to run on the task queue in order to
 
 #### 3. workflow.ts
 
-In this file, we define our workflows by specifing which activities should run for each specific workflow. We also specify some configurations for the workflow like startToCloseTimeout which is the time limit that the Avtivity has to begin within before it times out. 
+In this file, we define our workflows by specifying which activities should run for each specific workflow. We also specify some configurations for the workflow like startToCloseTimeout which is the time limit that the Activity has to begin within before it times out. 
 
 #### 4. worker.ts
 
@@ -54,17 +54,17 @@ Since the main aim of this task was creating a scheduled workflow which runs aut
 
 ***1. start-schedule.ts***
 
-This is the most importatnt file of them where I explicitly create the schedule instance. This instance contains which workflow is this schedule for, schedule ID, policies of the schedule and when should this schedule run. In our case, I specificed that it should run everyday at 9AM. 
+This is the most importatnt file of them where I explicitly create the schedule instance. This instance contains which workflow is this schedule for, schedule ID, policies of the schedule and when should this schedule run. In our case, I specified that it should run everyday at 9AM. 
 
 ***Note***
 
 Since the timezone of Temporal.io is UTC, and Egypt's time is UTC+02:00, I had to specify the hour of the schedule as 7 instead of 9 to account for that time difference and to receive the emails at 9AM Egypt's time.
 
-The command to run the schedule is `npm run schedule.start` which fires this start-schedule.ts file.
+The command to run the schedule is `npm run schedule.start` which fires the start-schedule.ts file.
 
 ![Schedule](/Screenshots/scheduleConfig.png)
 
-Notice -> hour:7
+* Notice -> hour:7
 
 #### 2. delete-schedule.ts
 
@@ -76,11 +76,11 @@ This file runs through the command `npm run schedule.pause` which is responsible
 
 #### 4. unpause-schedule.ts
 
-This file runs through the command `npm run schedule.unpause` which unpauses and already pause schedule.
+This file runs through the command `npm run schedule.unpause` which unpauses an already paused schedule.
 
 #### 5. go-faster.ts
 
-This file runs through the command `npm run schedule.go-faster` which is responsible changing the time specification of the schedule to change it to run every 30 seconds instead of everyday at 9 AM. This is just for demonstartion purposes and was not one of the requirments of the task.
+This file runs through the command `npm run schedule.go-faster` which is responsible for changing the time specification of the schedule to change it to run every 30 seconds instead of everyday at 9 AM. This is just for demonstartion purposes and was not one of the requirments of the task.
 
 ### Example runs and outputs screenshots
 
@@ -95,15 +95,18 @@ Here you can see how Temporal's web UI looks like when we first start it using t
 
 #### 2. Running the workflow without scheduling
 
-By running the command in the terminal, the workflow is created and executed. It then shows in the Web UI. If the execution was successful, the status of the workflow is `Completed`
+By running the command in the terminal, the workflow is created and executed. It then shows in the Web UI of Temporal Server. If the execution was successful, the status of the workflow is `Completed`.
 
 ![Run](/Screenshots/TerminalRunWorkflow.png)
+
+* Terminal command to run the workflow
+
 ![Run](/Screenshots/UIRunWorkflow.png)
 ![Run](/Screenshots/UIRunWorkflow2.png)
 
 #### 3. Running the scheduler
 
-By running the command in the terminal, the schedule of the workflow is created and shows on the web UI. The workflow will fire at the specific time specificed in the schedule, which is in our case at 9AM Egypt time (7 AM UTC). It is also shown in the screenshot that we have a list of some of the upcoming runs of the workflow, which shows that our scheduler is indeed working everyday at 9AM as shown by the dates and times of the upcoming runs. When a run successfully happens, it shows in the recent runs section. This is also shown in the following screenshots.
+By running the command shown in the first screenshot below in the terminal, the schedule of the workflow is created and shows on the web UI. The workflow will fire at the specific time specified in the schedule, which is in our case at 9AM Egypt time (7 AM UTC). It is also shown in the screenshot that we have a list of some of the upcoming runs of the workflow, which shows that our scheduler is indeed working everyday at 9AM as shown by the dates and times of the upcoming runs. When a run successfully happens, it shows in the recent runs section as shown in the 4th screesnhot below. 
 
 ![Run](/Screenshots/TerminalRunSchedule.png)
 
@@ -120,12 +123,12 @@ By running the command in the terminal, the schedule of the workflow is created 
 
 #### 4. Email template
 
-The main components for each news piece in the newsletter email are the title, author, publish date, description and image. Sometimes, not all those fields exist from the result of the newsAPI call. Hence, I only include the ones that exist. Note that the title of each news piece is actually a hyperlink that whenever is clicked, it navigates you to the original news website that has this news piece sp that you can read the full article.
+The main components for each news piece in the newsletter email are the title, author, publish date, description and image. Sometimes, not all those fields exist from the result of the newsAPI call. Hence, I only include the ones that exist. Note that the title of each news piece is actually a hyperlink that whenever is clicked, it navigates you to the original news website that has this news piece so that you can read the full article.
 
 
 ***Note***
 
-Most of the time, the result of the API call to news from Egypt does not include neither a description nor an imageUrl (both equal to null). That's why you will find the email received often only includes the title, author and publish date. However, for demonstration purposes in case you want to see the output when all fields exist, I created a hardcoded commented `fetchedNews` variable in activities.ts file that is of the same format as the return value of the API but with news other than that of Egypt (obtained from newsapi.org website). If you want to test with this `fetchedNews` static variable instead of actually fetching Egypt's news using the API, comment out the API call and uncomment the hardcoded fetchedNews variable. This way, the automated email will contain the hardcoded fetchedNews that contains all 5 fields. An alternative way if you don't want to use static code is to change the API call through the `NEWS_API_URL` variable in .env to have `country=us` instead of `country=eg` because apparently US news often contain images and description, unlike Egypt news.
+Most of the time, the result of the API call to news about Egypt does not include neither a description nor an imageUrl (both equal to null). That's why you will find the email received often only includes the title, author and publish date. However, for demonstration purposes in case you want to see how the email looks like when all fields exist, I created a hardcoded commented `fetchedNews` variable in activities.ts file that is of the same format as the return value of the API but with news other than that of Egypt (obtained from newsapi.org website). It contains only 3 pieces of news. If you want to test with this `fetchedNews` static variable instead of actually fetching Egypt's news using the API, comment out the API call and uncomment the hardcoded fetchedNews variable. This way, the automated email will contain the hardcoded fetchedNews that contains all 5 fields. An alternative way if you don't want to use static code is to change the API call through the `NEWS_API_URL` variable in .env to have `country=us` instead of `country=eg` because apparently US news often contains images and description, unlike Egypt news.
 
 ![Template](/Screenshots/DynamicEmail.png)
 ![Template](/Screenshots/DynamicEmail1.png)
