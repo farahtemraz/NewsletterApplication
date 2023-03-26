@@ -103,11 +103,20 @@ By running the command in the terminal, the workflow is created and executed. It
 
 #### 3. Running the scheduler
 
-By running the command in the terminal, the schedule of the workflow is created and shows on the web UI. The workflow will fire at the specific time specificed in the schedule, which is in our case at 9AM Egypt time (7 AM UTC). It is also shown in the screenshot that we have a list of some of the upcoming runs of the workflow, which shows that our scheduler is indeed working everyday at 9AM as shown by the dates and times of the upcoming runs. When a run successfully happens, it shows in the recent runs section.
+By running the command in the terminal, the schedule of the workflow is created and shows on the web UI. The workflow will fire at the specific time specificed in the schedule, which is in our case at 9AM Egypt time (7 AM UTC). It is also shown in the screenshot that we have a list of some of the upcoming runs of the workflow, which shows that our scheduler is indeed working everyday at 9AM as shown by the dates and times of the upcoming runs. When a run successfully happens, it shows in the recent runs section. This is also shown in the following screenshots.
 
 ![Run](/Screenshots/TerminalRunSchedule.png)
+
+* Terminal command to begin the schedule
+
 ![Run](/Screenshots/UIRunSchedule.png)
 ![Run](/Screenshots/UIRunSchedule2.png)
+
+* Before any run happens
+
+![Run](/Screenshots/ScheduleRun.png)
+
+* Result after 1 run of the scheduled workflow
 
 #### 4. Email template
 
@@ -122,13 +131,13 @@ Most of the time, the result of the API call to news from Egypt does not include
 ![Template](/Screenshots/DynamicEmail1.png)
 ![Template](/Screenshots/DynamicEmail2.png)
 
-Email resulting from fetching news from Egypt, lacking images and descriptions.
+* Email resulting from fetching news from Egypt, lacking images and descriptions.
 
 ![Template](/Screenshots/StaticEmail1.png)
 ![Template](/Screenshots/StaticEmail2.png)
 ![Template](/Screenshots/StaticEmail3.png)
 
-Email resulting from static coded news, with images and descriptions for demonstration.
+* Email resulting from static coded news, with images and descriptions for demonstration.
 
 
 
