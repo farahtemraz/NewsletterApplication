@@ -24,15 +24,15 @@ This project contains 4 main files that handle the Temporal workflow; activity.t
 
 This file contains a method called `sendNewsletter` which contains the actual logic of the project. It is divided into 3 parts. The first part is fetching the news through the API. The API call is specific for fetching the top 20 headline and news about egypt only. This is specified by adding `top-headlines?country=eg` to the API call. 
 
-IMAGE1
+![Fetch](/Screenshots/fetchNews.png)
 
 The next 2 parts are responsible for the email generation and sending. The first part configures the OAuth2 standard to allow our application to access the dedicated Gmail account `yodawynewsletter@gmail.com` and send the newsletters to the users from it. 
 
-IMAGE2
+![OAuth2](/Screenshots/ConfigureOAuth2.png)
 
 The sencond part is sending the email itself, which is done using Nodemailer. The recipients of the mail are statically defined in the code (mailList array) in case you want to change them to test receiving the email on your personal email. 
 
-IMAGE3+MAILLIST IMG
+![MailList](/Screenshots/mailList.png)
 
 The template of the email itself is defined in `/templates/newsletterTemplate.ts` which is the HTML code that makes up the way the email looks like and what information it includes.
 
@@ -62,7 +62,9 @@ Since the timezone of Temporal.io is UTC, and Egypt's time is UTC+02:00, I had t
 
 The command to run the schedule is `npm run schedule.start` which fires this start-schedule.ts file.
 
-IMAGE 4
+![Schedule](/Screenshots/scheduleConfig.png)
+
+Notice -> hour:7
 
 #### 2. delete-schedule.ts
 
@@ -88,21 +90,47 @@ In this section I will be providing you with tests carried out to ensure the fun
 
 Here you can see how Temporal's web UI looks like when we first start it using the `temporal server start-dev` command. Initially, there are no workflows or schedules.
 
+![Initial](/Screenshots/initialWorkflows.png)
+![Initial](/Screenshots/InitialSchedules.png)
+
 #### 2. Running the workflow without scheduling
 
 By running the command in the terminal, the workflow is created and executed. It then shows in the Web UI. If the execution was successful, the status of the workflow is `Completed`
+
+![Run](/Screenshots/TerminalRunWorkflow.png)
+![Run](/Screenshots/UIRunWorkflow.png)
+![Run](/Screenshots/UIRunWorkflow2.png)
 
 #### 3. Running the scheduler
 
 By running the command in the terminal, the schedule of the workflow is created and shows on the web UI. The workflow will fire at the specific time specificed in the schedule, which is in our case at 9AM Egypt time (7 AM UTC). It is also shown in the screenshot that we have a list of some of the upcoming runs of the workflow, which shows that our scheduler is indeed working everyday at 9AM as shown by the dates and times of the upcoming runs. When a run successfully happens, it shows in the recent runs section.
 
+![Run](/Screenshots/TerminalRunSchedule.png)
+![Run](/Screenshots/UIRunSchedule.png)
+![Run](/Screenshots/UIRunSchedule2.png)
+
 #### 4. Email template
 
 The main components for each news piece in the newsletter email are the title, author, publish date, description and image. Sometimes, not all those fields exist from the result of the newsAPI call. Hence, I only include the ones that exist. Note that the title of each news piece is actually a hyperlink that whenever is clicked, it navigates you to the original news website that has this news piece sp that you can read the full article.
 
+
 ***Note***
 
 Most of the time, the result of the API call to news from Egypt does not include neither a description nor an imageUrl (both equal to null). That's why you will find the email received often only includes the title, author and publish date. However, for demonstration purposes in case you want to see the output when all fields exist, I created a hardcoded commented `fetchedNews` variable in activities.ts file that is of the same format as the return value of the API but with news other than that of Egypt (obtained from newsapi.org website). If you want to test with this `fetchedNews` static variable instead of actually fetching Egypt's news using the API, comment out the API call and uncomment the hardcoded fetchedNews variable. This way, the automated email will contain the hardcoded fetchedNews that contains all 5 fields. An alternative way if you don't want to use static code is to change the API call through the `NEWS_API_URL` variable in .env to have `country=us` instead of `country=eg` because apparently US news often contain images and description, unlike Egypt news.
+
+![Template](/Screenshots/DynamicEmail.png)
+![Template](/Screenshots/DynamicEmail1.png)
+![Template](/Screenshots/DynamicEmail2.png)
+
+Email resulting from fetching news from Egypt, lacking images and descriptions.
+
+![Template](/Screenshots/StaticEmail1.png)
+![Template](/Screenshots/StaticEmail2.png)
+![Template](/Screenshots/StaticEmail3.png)
+
+Email resulting from static coded news, with images and descriptions for demonstration.
+
+
 
 ### Conclusion
 
