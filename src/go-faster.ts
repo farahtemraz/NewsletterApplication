@@ -7,7 +7,7 @@ async function run() {
 
   const handle = client.schedule.getHandle('newsletter-schedule');
   await handle.update((schedule: ScheduleUpdateOptions) => {
-    schedule.spec.intervals = [{ every: '5s' }];
+    schedule.spec.intervals = [{ every: '30s' }];
     return schedule;
   });
 

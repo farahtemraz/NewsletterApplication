@@ -6,14 +6,14 @@ const newsletterEmail = function (fetchedNews: NewsPiece[]) {
       (arrayItems =
         arrayItems +
         '<li style="list-style-type: none">' +
-        '<p style="margin: 0 0 24px;">' +
-        '<a href=' +
+        '<p style="margin: 0 0 24px; font-size: 20px; font-weight: bold">' +
+        '<a style="text-decoration: none" href=' +
         news.url +
         '>' +
         news.title +
         '</a>' +
         '</p>' +
-        '<p style="margin: 0 0 24px;">' +
+        '<p style="margin: 0 0 24px; font-weight: bold">' +
         'by ' +
         news.author +
         ' at ' +
