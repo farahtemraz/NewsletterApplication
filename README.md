@@ -41,7 +41,7 @@ The template of the email itself is defined in `/templates/newsletterTemplate.ts
 
 #### 2. client.ts
 
-This file is what puts the workflow we want to run on the task queue in order to be run by the worker.
+This is the file the fires when we run `npm run workflow`. It is what puts the workflow we want to run on the task queue in order to be run by the worker.
 
 #### 3. workflow.ts
 
@@ -49,7 +49,7 @@ In this file, we define our workflows by specifying which activities should run 
 
 #### 4. worker.ts
 
-This is the file the fires when we run `npm run workflow`. It creates a worker instance with the workflows from workflow.ts, activities from activities.ts file and the taskQueue of the activities and runs this created worker. A Worker hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the Task Queue. After the Worker runs the code, it communicates the results back to the Temporal Server.
+This is the file the fires when we run `npm run start.watch`. It creates a worker instance with the workflows from workflow.ts, activities from activities.ts file and the taskQueue of the activities and runs this created worker. A Worker hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the Task Queue. After the Worker runs the code, it communicates the results back to the Temporal Server.
 
 An additional funtionality of this file is defining a mini express app that is responsible for the unsubscription flow as show in the below screenshot. The unsubscription flow will be discussed in details in what follows.
 
