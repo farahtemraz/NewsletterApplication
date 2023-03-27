@@ -185,6 +185,6 @@ Most of the time, the result of the API call to news about Egypt does not includ
 
 This project was very intersting to work on and exposed me to new tools that I wasn't very much aware of like Temporal.io. I would definetly explore more this area of scheduled workflows and experiment with other different use cases to further benefit from this task and what it paved the way for. I hope my explanation of the implementation and flow was clear and that all the requirements were fullfilled. 
 
-Looking forward to hearing you feedback!
+Looking forward to hearing your feedback!
 
 
