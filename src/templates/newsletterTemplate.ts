@@ -148,6 +148,8 @@ const newsletterEmail = function (fetchedNews: NewsPiece[]) {
                             <a href="mailto:yodawynewsletter@gmail.com" class="hover-underline"
                               style="--text-opacity: 1; color: #7367f0;  text-decoration: none;">yodawynewsletter@gmail.com</a>.
                           </p>
+                            <a href="http://localhost:3000/" class="hover-underline"
+                              style="--text-opacity: 1; color: #7367f0;  text-decoration: none;">Unsubscribe</a>.
                           <p style="margin: 0 0 16px;">Thanks, <br>Yodawy Support Team</p>
                         </td>
                       </tr>

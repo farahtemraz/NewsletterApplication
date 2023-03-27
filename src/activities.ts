@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable @typescript-eslint/no-var-requires */
 require('dotenv').config();
 import { NewsPiece } from './models/newsPiece';
 import axios from 'axios';
@@ -7,6 +7,7 @@ import { google } from 'googleapis';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import newsletterEmail from './templates/newsletterTemplate';
 const OAuth2 = google.auth.OAuth2;
+const fs = require('fs');
 
 export async function sendNewsletter(): Promise<string> {
   // Fetch news
@@ -69,7 +70,14 @@ export async function sendNewsletter(): Promise<string> {
   //   },
   // ];
 
-  const mailList: string[] = ['farahmohamedtemraz@gmail.com', 'farahtemraz9@gmail.com'];
+  // const mailList: string[] = ['farahmohamedtemraz@gmail.com', 'farahtemraz9@gmail.com'];
+
+  const allEmails = fs.readFileSync('emails.json');
+  const data = JSON.parse(allEmails);
+  const mailList = [];
+  for (let i = 0; i < data.length; i++) {
+    mailList.push(data[i].email);
+  }
 
   const oauth2Client = new OAuth2(
     process.env.CLIENT_ID,

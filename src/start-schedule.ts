@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Connection, Client, ScheduleOverlapPolicy } from '@temporalio/client';
 import { newsletterWorkflow } from './workflows';
 
@@ -24,6 +25,7 @@ async function run() {
           comment: 'Everyday at 9AM UTC+02:00, 7AM',
           dayOfWeek: '*',
           hour: 7,
+          // minute: 26,
         },
       ],
     },
