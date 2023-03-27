@@ -10,9 +10,10 @@ const OAuth2 = google.auth.OAuth2;
 const fs = require('fs');
 
 export async function sendNewsletter(): Promise<string> {
-  // Fetching top 20 news about Egypt using NewsAPI
+  // Fetching top 20 news about Egypt using NewsAPI.
   // Comment this part if you want to test how the email template would look like
-  // with pieces of news that contain values for all fields including imageUrl and description
+  // with pieces of news that contain values for all fields including
+  // imageUrl and description
   // and uncomment the below commented static fetchedNews variable
 
   let fetchedNews;
