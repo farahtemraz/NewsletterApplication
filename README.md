@@ -30,9 +30,12 @@ The next 2 parts are responsible for the email generation and sending. The first
 
 ![OAuth2](/Screenshots/ConfigureOAuth2.png)
 
-The sencond part is sending the email itself, which is done using Nodemailer. The recipients of the mail are statically defined in the code (mailList array). In case you want to test receiving the email on your personal email, simply add it to the mailList array shown in the snapshot bellow. 
+The sencond part is sending the email itself, which is done using Nodemailer. The recipients of the mail are statically defined in the code inside email.json. In case you want to test receiving the email on your personal email, simply add it to the email.json file following the same format as shown in the snapshot below. 
 
 ![MailList](/Screenshots/mailList.png)
+
+In a proper scenario, the emails would be fetched from the dtaabase not a JSON file, however, for the sake of simplicity and due to shortage of time, the JSON file mimics the return value from the database when we try to fetch all registered emails.
+
 
 The template of the email itself is defined in `/templates/newsletterTemplate.ts` which is the HTML template that makes up the way the email looks like and what information it includes.
 
@@ -47,6 +50,10 @@ In this file, we define our workflows by specifying which activities should run 
 #### 4. worker.ts
 
 This is the file the fires when we run `npm run workflow`. It creates a worker instance with the workflows from workflow.ts, activities from activities.ts file and the taskQueue of the activities and runs this created worker. A Worker hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the Task Queue. After the Worker runs the code, it communicates the results back to the Temporal Server.
+
+An additional funtionality of this file is defining our mini express app that is responsible for the unsubscription flow as show in the below screenshot. The unsubscription flow will be discussed in details in what follows.
+
+NEW SCREENSHOT
 
 ### Schedule
 
@@ -81,6 +88,24 @@ This file runs through the command `npm run schedule.unpause` which unpauses an 
 #### 5. go-faster.ts
 
 This file runs through the command `npm run schedule.go-faster` which is responsible for changing the time specification of the schedule to change it to run every 30 seconds instead of everyday at 9 AM. This is just for demonstartion purposes and was not one of the requirments of the task.
+
+### Unsubscription Task
+
+Due to shortage of time, I wasn't able to properly implement this module, however, I wanted to do the best I can in demonstrating how it should be like, so I will discuss my implementation and how it could be modified in this section.
+
+#### Flow
+
+In order to unsubscribe, you will find a like at the bottom of every email that says `Unsubscribe`. Once you click on this link, you will be redirected to `localhost:3000/` where the route for `get('/')` that was shown in the `worker.ts` file will be fired. What this route does is that it renders a very simple unsubscription page where you will be prompted to type the email address you want to unsubscribe for and press `Unsubscribe` as demonstrated in the below screenshot 
+
+SNAPSHOT UNSUBSCRIBE VIEW
+
+What happens is that the `post('/')` route is called and the flow goes as follows. All the registered email from `email.json` are read, and as long as the email from emails.json is not the same as the email requesting unsubscription, it is kept as it is, otherwise, it is removed from `emails.json`. Which means, the next time the workflow fires, the email will not present in `email.json` and hence it will not be part of the mail list that receives the email via node mailer.
+
+### Proper Implementation
+
+The proper way to implement this feature can be as follows. Basically, the `emails.json` file mimics the result of a fetchAll query from the applications database, that returns all registered emails for the newsletter. Hence, for the unsubscription flow, what should actually happen is that we remove from the database the email that is requesting the unsubscription. And hence, the next time we fetch all emails to send them the newsletter at 9 AM, the email that unsubscribed will no longer be there and will not receive the email.
+
+A possible database coule be MongoDB, since we do not have a very complex logic that requires a relational database. Hence a NoSQL database will be sufficuent for our purpose here as we only need a table for all emails that are registered for the newsletter.
 
 ### Example runs and outputs screenshots
 
