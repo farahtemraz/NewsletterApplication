@@ -10,7 +10,11 @@ const OAuth2 = google.auth.OAuth2;
 const fs = require('fs');
 
 export async function sendNewsletter(): Promise<string> {
-  // Fetch news
+  // Fetching top 20 news about Egypt using NewsAPI
+  // Comment this part if you want to test how the email template would look like
+  // with pieces of news that contain values for all fields including imageUrl and description
+  // and uncomment the below commented static fetchedNews variable
+
   let fetchedNews;
   try {
     const url = process.env.NEWS_API_URL;
@@ -21,6 +25,11 @@ export async function sendNewsletter(): Promise<string> {
   } catch (error: any) {
     return 'Failed to fetch news';
   }
+
+  // Static news hardcoded for demonstartion of how the email template looks like with an image and a description
+  // for the news piece.
+  // Uncomment this part if you want to view how the email template looks like with this hardcoded news and comment
+  // the above section.
 
   // const fetchedNews: NewsPiece[] = [
   //   {
@@ -70,7 +79,8 @@ export async function sendNewsletter(): Promise<string> {
   //   },
   // ];
 
-  // const mailList: string[] = ['farahmohamedtemraz@gmail.com', 'farahtemraz9@gmail.com'];
+  // Fetching the email list from emails.json file
+  // Ideally, those would be fetched from a database
 
   const allEmails = fs.readFileSync('emails.json');
   const data = JSON.parse(allEmails);
@@ -78,6 +88,8 @@ export async function sendNewsletter(): Promise<string> {
   for (let i = 0; i < data.length; i++) {
     mailList.push(data[i].email);
   }
+
+  // Configuring OAuth2
 
   const oauth2Client = new OAuth2(
     process.env.CLIENT_ID,
@@ -110,6 +122,8 @@ export async function sendNewsletter(): Promise<string> {
       accessToken,
     },
   };
+
+  // Sending the email
 
   const transporter = nodemailer.createTransport(smtpConfig);
   const emailTemplate = newsletterEmail(fetchedNews);
