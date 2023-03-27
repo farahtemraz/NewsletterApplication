@@ -107,6 +107,7 @@ In order to unsubscribe, you will find a link at the bottom of every email that 
 ![MailList](/Screenshots/unsubView.png)
 
 * Frontend view at `localhost:3000` that opens up when you click on `Unsubscribe` from the received email.
+* Should be modified to look better and more usable for the user. 
 
 When you click `Unsubscribe`, what happens is that the `post('/')` route is called and the flow goes as follows. All the registered emails from `emails.json` are read, and the email sent through the POST request is searched for within the emails from `emails.json` and is deleted from `emails.json` once a match is found. Which means, the next time the workflow fires, the email will not be present in `emails.json` and hence it will not be part of the mail list that receives the email via node mailer the next time the email is sent out. If you try it out with an email written inside `emails.json`, you will see that it gets deleted from the file if you click `Unsubscribe`.
 
