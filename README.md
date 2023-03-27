@@ -30,11 +30,11 @@ The next 2 parts are responsible for the email generation and sending. The first
 
 ![OAuth2](/Screenshots/ConfigureOAuth2.png)
 
-The sencond part is sending the email itself, which is done using Nodemailer. The recipients of the mail are statically defined in the code inside email.json. In case you want to test receiving the email on your personal email, simply add it to the email.json file following the same format as shown in the snapshot below. 
+The sencond part is sending the email itself, which is done using Nodemailer. The recipients of the mail are statically defined in the code inside `emails.json`. In case you want to test receiving the email on your personal email, simply add it to the `emails.json` file following the same format as shown in the snapshot below. 
 
-![MailList](/Screenshots/mailList.png)
+![MailList](/Screenshots/emailsJson.png)
 
-In a proper scenario, the emails would be fetched from the dtaabase not a JSON file, however, for the sake of simplicity and due to shortage of time, the JSON file mimics the return value from the database when we try to fetch all registered emails.
+In a proper scenario, the emails would be fetched from the database instead of being fetched from a JSON file, however, for the sake of simplicity and due to shortage of time, the JSON file mimics the return value from the database when we try to fetch all registered emails assuming the database would have a table for all emails who have subscribed to the newsletter.
 
 
 The template of the email itself is defined in `/templates/newsletterTemplate.ts` which is the HTML template that makes up the way the email looks like and what information it includes.
@@ -51,19 +51,21 @@ In this file, we define our workflows by specifying which activities should run 
 
 This is the file the fires when we run `npm run workflow`. It creates a worker instance with the workflows from workflow.ts, activities from activities.ts file and the taskQueue of the activities and runs this created worker. A Worker hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the Task Queue. After the Worker runs the code, it communicates the results back to the Temporal Server.
 
-An additional funtionality of this file is defining our mini express app that is responsible for the unsubscription flow as show in the below screenshot. The unsubscription flow will be discussed in details in what follows.
+An additional funtionality of this file is defining a mini express app that is responsible for the unsubscription flow as show in the below screenshot. The unsubscription flow will be discussed in details in what follows.
 
-NEW SCREENSHOT
+![Express](/Screenshots/expressWorker.png)
+
+* Shows the part of `worker.ts` file that is resposnbile for the unsubscription feature which will be discussed later on.
 
 ### Schedule
 
-Since the main aim of this task was creating a scheduled workflow which runs automatically at 9AM instead of having a workflow that is fired manually each and every time, this is where the need for Temporal schedules arised. In order to achieve this, I added 5 important files that handle the scheduling of the newsletter workflow, which are; `start-schedule.ts`, `delete-schedule.ts`, `pause-schedule.ts`, `unpause-schedule.ts` and `go-faster.ts`. I will discuss each of the breifly in what follows.
+Since the main aim of this task was creating a scheduled workflow which runs automatically at 9AM instead of having a workflow that is fired manually each and every time, this is where the need for Temporal schedules arised. In order to achieve this, I added 5 important files that handle the scheduling of the newsletter workflow, which are; `start-schedule.ts`, `delete-schedule.ts`, `pause-schedule.ts`, `unpause-schedule.ts` and `go-faster.ts`. Each will be discussed breifly in what follows.
 
 ***1. start-schedule.ts***
 
-This is the most importatnt file of them where I explicitly create the schedule instance. This instance contains which workflow is this schedule for, schedule ID, policies of the schedule and when should this schedule run. In our case, I specified that it should run everyday at 9AM. 
+This is the most importatnt file of them where the schedule instance is explicitly created. This instance contains which workflow is this schedule for, schedule ID, policies of the schedule and when should this schedule run. In our case, I specified that it should run everyday at 9AM. 
 
-***Note***
+***Important note***
 
 Since the timezone of Temporal.io is UTC, and Egypt's time is UTC+02:00, I had to specify the hour of the schedule as 7 instead of 9 to account for that time difference and to receive the emails at 9AM Egypt's time.
 
@@ -71,6 +73,7 @@ The command to run the schedule is `npm run schedule.start` which fires the star
 
 ![Schedule](/Screenshots/scheduleConfig.png)
 
+* Configuring the scheduler of the newsletter workflow
 * Notice -> hour:7
 
 #### 2. delete-schedule.ts
@@ -91,15 +94,21 @@ This file runs through the command `npm run schedule.go-faster` which is respons
 
 ### Unsubscription Task
 
-Due to shortage of time, I wasn't able to properly implement this module, however, I wanted to do the best I can in demonstrating how it should be like, so I will discuss my implementation and how it could be modified in this section.
+Due to shortage of time, I wasn't able to properly implement this module. However, I wanted to do the best I can in demonstrating how it should be like, that's why I implemented it in a simplistic way for demonstartion. I will discuss this implementation and how it should be modified in this section.
 
-#### Flow
+#### Implemented flow
 
-In order to unsubscribe, you will find a like at the bottom of every email that says `Unsubscribe`. Once you click on this link, you will be redirected to `localhost:3000/` where the route for `get('/')` that was shown in the `worker.ts` file will be fired. What this route does is that it renders a very simple unsubscription page where you will be prompted to type the email address you want to unsubscribe for and press `Unsubscribe` as demonstrated in the below screenshot 
+In order to unsubscribe, you will find a link at the bottom of every email that says `Unsubscribe`. Once you click on this link, you will be redirected to `localhost:3000/` where the route for `get('/')` from `worker.ts` file shown below will be fired. What this route does is that it renders a very simple unsubscription page where you will be prompted to type the email address you want to unsubscribe for and press `Unsubscribe` as demonstrated in the below screenshot 
 
-SNAPSHOT UNSUBSCRIBE VIEW
+![MailList](/Screenshots/routes.png)
 
-What happens is that the `post('/')` route is called and the flow goes as follows. All the registered email from `email.json` are read, and as long as the email from emails.json is not the same as the email requesting unsubscription, it is kept as it is, otherwise, it is removed from `emails.json`. Which means, the next time the workflow fires, the email will not present in `email.json` and hence it will not be part of the mail list that receives the email via node mailer.
+* Routes for unsubscription.
+
+![MailList](/Screenshots/unsubscribeView.png)
+
+* Frontend view at `localhost:3000` that opens up when you click on `Unsubscribe` from the received email.
+
+When you click `Unsubscribe`, what happens is that the `post('/')` route is called and the flow goes as follows. All the registered emails from `emails.json` are read, and the email send through the POST request is searched for within the emails from `emails.json` and is deleted from `emails.json` once a match is found. Which means, the next time the workflow fires, the email will not be present in `emails.json` and hence it will not be part of the mail list that receives the email via node mailer the next time the email is sent out. If you try it out with an email written inside `emails.json`, you will see that it disappears if you click `Unsubscribe`.
 
 ### Proper Implementation
 
