@@ -177,7 +177,7 @@ Most of the time, the result of the API call to news about Egypt does not includ
 
 * Email resulting from static coded news, with images and descriptions for demonstration.
 
-![Template](/Screenshot/unsubscribeLink)
+![Template](/Screenshot/unsubscribeLink.png)
 
 * Unsubscribe link shown on the email template after it was added in the last code commit
 
