@@ -22,7 +22,7 @@ This project contains 4 main files that handle the Temporal workflow; activity.t
 
 #### 1. activity.ts
 
-This file contains a method called `sendNewsletter` which contains the actual logic of the project. It is divided into 3 parts. The first part is fetching the news through the API. The API call is specific for fetching the top 20 headline and news about Egypt only. This is specified by adding `top-headlines?country=eg` to the API call. 
+This file contains a method called `sendNewsletter` which contains the actual logic of the project. It is divided into 3 parts. The first part is fetching the news through the API. The API call is specific for fetching the top 20 headlines and news about Egypt only. This is specified by adding `top-headlines?country=eg` to the API call. 
 
 ![Fetch](/Screenshots/fetchNews.png)
 
@@ -51,7 +51,7 @@ In this file, we define our workflows by specifying which activities should run 
 
 This is the file the fires when we run `npm run start.watch`. It creates a worker instance with the workflows from workflow.ts, activities from activities.ts file and the taskQueue of the activities and runs this created worker. A Worker hosts Workflow and Activity functions and executes them one at a time. The Temporal Server tells the Worker to execute a specific function from information it pulls from the Task Queue. After the Worker runs the code, it communicates the results back to the Temporal Server.
 
-An additional funtionality of this file is defining a mini express app that is responsible for the unsubscription flow as show in the below screenshot. The unsubscription flow will be discussed in details in what follows.
+An additional funtionality of this file is defining a mini express app that is responsible for the unsubscription flow as show in the below screenshot. The unsubscription flow will be discussed in details in a later section.
 
 ![Express](/Screenshots/expressWorker.png)
 
@@ -123,7 +123,7 @@ In this section I will be providing you with tests carried out to ensure the fun
 
 #### 1. Initial state of Temporal Web UI
 
-Here you can see how Temporal's web UI looks like when we first start it using the `temporal server start-dev` command. Initially, there are no workflows or schedules.
+Here you can see how Temporal's web UI looks like when we first start it using the `temporal server start-dev` command. Initially, there are no workflows or schedules. This is shown on `http://localhost:8233/`
 
 ![Initial](/Screenshots/initialWorkflows.png)
 ![Initial](/Screenshots/InitialSchedules.png)
@@ -177,7 +177,9 @@ Most of the time, the result of the API call to news about Egypt does not includ
 
 * Email resulting from static coded news, with images and descriptions for demonstration.
 
+![Template](/Screenshot/unsubscribeLink)
 
+* Unsubscribe link shown on the email template after it was added in the last code commit
 
 ### Conclusion
 
